@@ -1,0 +1,99 @@
+/* Responsive Design */
+
+@media (max-width: 1200px) {
+    /* Para pantallas más grandes (tabletas grandes y pantallas de escritorio) */
+    header nav ul li {
+        font-size: 1rem;
+    }
+
+    .service-card {
+        width: 48%;
+        margin: 10px 1%;
+        display: inline-block;
+    }
+}
+
+@media (max-width: 992px) {
+    /* Para tabletas (pantallas más pequeñas de 992px de ancho) */
+    header nav ul li {
+        font-size: 0.9rem;
+    }
+
+    .service-card {
+        width: 48%;
+        margin: 10px 1%;
+        display: inline-block;
+    }
+
+    /* En el menú, hacer que los elementos se apilen */
+    header nav ul li {
+        display: block;
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Para pantallas de teléfonos y tabletas pequeñas */
+    header nav ul {
+        text-align: center;
+    }
+
+    header nav ul li {
+        margin: 10px 0;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .service-card {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .service-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .service-card p {
+        font-size: 0.9rem;
+    }
+
+    .intro-section h1 {
+        font-size: 1.8rem;
+    }
+
+    .intro-section p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Para pantallas muy pequeñas (teléfonos móviles más pequeños) */
+    header nav ul li {
+        font-size: 0.8rem;
+    }
+
+    .service-card h3 {
+        font-size: 1rem;
+    }
+
+    .service-card p {
+        font-size: 0.8rem;
+    }
+
+    .intro-section h1 {
+        font-size: 1.5rem;
+    }
+
+    .intro-section p {
+        font-size: 0.9rem;
+    }
+
+    /* Ajustar el botón de registro */
+    .btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+    }
+}
