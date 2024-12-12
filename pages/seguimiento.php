@@ -1,5 +1,3 @@
-<!-- Módulo Seguimiento -->
-
 <?php
 // Iniciar sesión para gestionar mensajes si es necesario
 session_start();
@@ -15,9 +13,14 @@ $searchResults = [];
 
 if (isset($_GET['search'])) {
     $searchTerm = $conn->real_escape_string($_GET['search']);
-    $sql = "SELECT cases.id, cases.description, cases.status, clients.name AS client_name FROM cases 
-            INNER JOIN clients ON cases.client_id = clients.id 
-            WHERE cases.id LIKE '%$searchTerm%' OR cases.description LIKE '%$searchTerm%' OR clients.name LIKE '%$searchTerm%'";
+    $sql = "SELECT cases.id, cases.description, cases.status, clients.name AS client_name, lawyers.name AS lawyer_name 
+            FROM cases
+            INNER JOIN clients ON cases.client_id = clients.id
+            INNER JOIN lawyers ON cases.lawyer_id = lawyers.id
+            WHERE cases.id LIKE '%$searchTerm%' 
+               OR cases.description LIKE '%$searchTerm%' 
+               OR clients.name LIKE '%$searchTerm%' 
+               OR lawyers.name LIKE '%$searchTerm%'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -53,7 +56,7 @@ $conn->close();
 
                 <!-- Formulario de búsqueda -->
                 <form method="GET" action="seguimiento.php" class="search-form">
-                    <input type="text" name="search" placeholder="Buscar por ID, nombre de caso o cliente" required>
+                    <input type="text" name="search" placeholder="Buscar por ID, nombre de caso, cliente o abogado" required>
                     <button type="submit">Buscar</button>
                 </form>
 
@@ -67,6 +70,7 @@ $conn->close();
                                     <th>Descripción</th>
                                     <th>Estado</th>
                                     <th>Cliente</th>
+                                    <th>Asesor Legal</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -76,6 +80,7 @@ $conn->close();
                                         <td><?php echo $case["description"]; ?></td>
                                         <td><?php echo $case["status"]; ?></td>
                                         <td><?php echo $case["client_name"]; ?></td>
+                                        <td><?php echo $case["lawyer_name"]; ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
