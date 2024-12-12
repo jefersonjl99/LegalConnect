@@ -25,6 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validar nombre
     if (empty(trim($_POST["nombre"]))) {
         $nombre_err = "Por favor ingrese su nombre completo.";
+    } elseif (strpos(trim($_POST["nombre"]), " ") === false) {
+        $nombre_err = "Por favor ingrese su nombre y apellido.";
     } else {
         $nombre = trim($_POST["nombre"]);
     }
@@ -41,6 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validar teléfono
     if (empty(trim($_POST["telefono"]))) {
         $telefono_err = "Por favor ingrese su número de teléfono.";
+    } elseif (!ctype_digit($_POST["telefono"]) || strlen($_POST["telefono"]) != 10) {
+        $telefono_err = "El número de teléfono debe ser numérico y contener 10 dígitos.";
     } else {
         $telefono = trim($_POST["telefono"]);
     }
@@ -127,7 +131,7 @@ $conn->close();
                         <span class="error"><?php echo $email_err; ?></span>
                     </div>
                     <div class="form-group">
-                        <label for="telefono">Número de Teléfono</label>
+                        <label for="telefono">Número Celular</label>
                         <input type="tel" id="telefono" name="telefono" value="<?php echo $telefono; ?>" required placeholder="Ingrese su número de teléfono">
                         <span class="error"><?php echo $telefono_err; ?></span>
                     </div>
