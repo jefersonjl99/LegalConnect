@@ -1,27 +1,33 @@
+<!-- Módulo Seguimiento -->
+
 <?php
 // Iniciar sesión para gestionar mensajes si es necesario
 session_start();
 
-// Datos de casos simulados
-$cases = [
-    ["id" => 101, "title" => "Divorcio de mutuo acuerdo", "status" => "En Proceso"],
-    ["id" => 102, "title" => "Disputa laboral", "status" => "Pendiente"],
-    ["id" => 103, "title" => "Propiedad de bienes", "status" => "Finalizado"],
-];
+// Conexión a la base de datos
+$conn = new mysqli("localhost", "root", "", "legal_connect");
 
-// Variable de resultados para almacenar casos filtrados
+if ($conn->connect_error) {
+    die("Error de conexión: " . $conn->connect_error);
+}
+
 $searchResults = [];
 
-// Comprobar si se ha realizado una búsqueda
 if (isset($_GET['search'])) {
-    $searchTerm = strtolower(trim($_GET['search']));
-    foreach ($cases as $case) {
-        // Filtrar por ID o título del caso (convertidos a minúsculas para coincidencia insensible a mayúsculas)
-        if (strpos(strtolower($case["title"]), $searchTerm) !== false || strpos(strval($case["id"]), $searchTerm) !== false) {
-            $searchResults[] = $case;
+    $searchTerm = $conn->real_escape_string($_GET['search']);
+    $sql = "SELECT cases.id, cases.description, cases.status, clients.name AS client_name FROM cases 
+            INNER JOIN clients ON cases.client_id = clients.id 
+            WHERE cases.id LIKE '%$searchTerm%' OR cases.description LIKE '%$searchTerm%' OR clients.name LIKE '%$searchTerm%'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $searchResults[] = $row;
         }
     }
 }
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -29,12 +35,11 @@ if (isset($_GET['search'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Seguimiento de Casos | LegalConnect</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/responsive.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    </head>
+</head>
 <body>
 
     <!-- Header -->
@@ -48,27 +53,29 @@ if (isset($_GET['search'])) {
 
                 <!-- Formulario de búsqueda -->
                 <form method="GET" action="seguimiento.php" class="search-form">
-                    <input type="text" name="search" placeholder="Buscar por ID o nombre de caso" required>
+                    <input type="text" name="search" placeholder="Buscar por ID, nombre de caso o cliente" required>
                     <button type="submit">Buscar</button>
                 </form>
 
                 <?php if (isset($_GET['search'])) : ?>
                     <h2>Resultados de la búsqueda:</h2>
                     <?php if (!empty($searchResults)) : ?>
-                        <table>
+                        <table class="table">
                             <thead>
                                 <tr>
                                     <th>ID del Caso</th>
                                     <th>Descripción</th>
                                     <th>Estado</th>
+                                    <th>Cliente</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($searchResults as $case) : ?>
                                     <tr>
                                         <td><?php echo $case["id"]; ?></td>
-                                        <td><?php echo $case["title"]; ?></td>
+                                        <td><?php echo $case["description"]; ?></td>
                                         <td><?php echo $case["status"]; ?></td>
+                                        <td><?php echo $case["client_name"]; ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -77,25 +84,7 @@ if (isset($_GET['search'])) {
                         <p>No se encontraron casos que coincidan con su búsqueda.</p>
                     <?php endif; ?>
                 <?php else : ?>
-                    <h2>Casos Activos:</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID del Caso</th>
-                                <th>Descripción</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($cases as $case) : ?>
-                                <tr>
-                                    <td><?php echo $case["id"]; ?></td>
-                                    <td><?php echo $case["title"]; ?></td>
-                                    <td><?php echo $case["status"]; ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                    <p>Realice una búsqueda para ver los casos registrados.</p>
                 <?php endif; ?>
             </div>
         </section>

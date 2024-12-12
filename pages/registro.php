@@ -1,6 +1,20 @@
-<?php
+<?php 
 // Iniciar sesión
 session_start();
+
+// Datos de conexión a la base de datos
+$host = 'localhost';
+$user = 'root';
+$password = '';
+$dbname = 'legal_connect';
+
+// Crear conexión
+$conn = new mysqli($host, $user, $password, $dbname);
+
+// Verificar conexión
+if ($conn->connect_error) {
+    die("Error de conexión: " . $conn->connect_error);
+}
 
 // Definir variables e inicializarlas con valores vacíos
 $nombre = $email = $telefono = $servicio = "";
@@ -38,15 +52,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $servicio = $_POST["servicio"];
     }
 
-    // Si no hay errores, mostrar el mensaje de éxito (simulación de inserción a base de datos)
+    // Si no hay errores, verificar si el cliente ya existe
     if (empty($nombre_err) && empty($email_err) && empty($telefono_err) && empty($servicio_err)) {
+        $sql_check = "SELECT id FROM clients WHERE email = ?";
+        $stmt_check = $conn->prepare($sql_check);
+        $stmt_check->bind_param("s", $email);
+        $stmt_check->execute();
+        $stmt_check->store_result();
 
+        if ($stmt_check->num_rows > 0) {
+            $email_err = "Este correo electrónico ya está registrado.";
+        } else {
+            // Preparar la declaración SQL para insertar
+            $sql = "INSERT INTO clients (name, email, phone, service) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssss", $nombre, $email, $telefono, $servicio);
 
-        $_SESSION["registro_exitoso"] = "¡Registro exitoso! Ahora puede acceder a nuestros servicios.";
-        header("location: servicios.php");  // Redirigir a la página de servicios
-        exit;
+            if ($stmt->execute()) {
+                $_SESSION["registro_exitoso"] = "¡Registro exitoso! Ahora puede acceder a nuestros servicios.";
+            } else {
+                echo "Error: " . $stmt->error;
+            }
+
+            // Cerrar la declaración
+            $stmt->close();
+        }
+
+        $stmt_check->close();
     }
 }
+
+// Cerrar la conexión a la base de datos
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +91,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Registro | LegalConnect</title>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../css/responsive.css">

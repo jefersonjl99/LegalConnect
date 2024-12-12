@@ -17,21 +17,8 @@
 <body>
 
     <!-- Header -->
-    <!-- <header>
-        <div class="container">
-            <nav>
-                <ul>
-                    <li><a href="index.php" class="active">Inicio</a></li>
-                    <li><a href="pages/servicios.php">Servicios</a></li>
-                    <li><a href="pages/registro.php">Registro</a></li>
-                    <li><a href="pages/seguimiento.php">Seguimiento</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header> -->
-
-    <!-- Header -->
     <?php include_once('includes/header.php'); ?>
+
     <main>
         <section class="hero-section">
             <div class="container text-center">
@@ -47,6 +34,14 @@
                 ?>
 
                 <a href="pages/registro.php" class="btn btn-primary animated fadeIn">Regístrate Ahora</a>
+            </div>
+        </section>
+
+        <!-- Seccion Mapa de Google -->
+        <section class="map-section">
+            <div class="container">
+                <h2 class="text-center">Nuestra Ubicación</h2>
+                <div id="map" style="width: 100%; height: 400px;"></div>
             </div>
         </section>
 
@@ -80,42 +75,23 @@
             </div>
         </section>
 
-        <!-- Seccion  Testimonios -->
-        <section class="testimonials-section">
-            <div class="container">
-                <h2>Testimonios</h2>
-                <div id="testimonialSlider" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <p>"LegalConnect me ayudó a resolver mi problema legal rápidamente. ¡Muy profesionales!"</p>
-                            <h5>- Juan Pérez</h5>
-                        </div>
-                        <div class="carousel-item">
-                            <p>"Excelente servicio, muy recomendable para cualquier situación legal."</p>
-                            <h5>- Ana Gómez</h5>
-                        </div>
-                        <div class="carousel-item">
-                            <p>"La mejor asesoría que he recibido. Los recomiendo al 100%."</p>
-                            <h5>- Carlos Díaz</h5>
-                        </div>
-                    </div>
-                    <a class="carousel-control-prev" href="#testimonialSlider" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" href="#testimonialSlider" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </div>
-            </div>
-        </section>
+        <!-- Footer -->
+        <?php include_once('includes/footer.php'); ?>
     </main>
 
-    <!-- Footer -->
-    <?php include_once('includes/footer.php'); ?>
-
-    <!-- Scripts -->
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDaeWicvigtP9xPv919E-RNoxfvC-Hqik&callback=initMap" async defer></script>
+    <script>
+        function initMap() {
+            const bogota = { lat: 4.711, lng: -74.0721 };
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: bogota,
+            });
+            const marker = new google.maps.Marker({
+                position: bogota,
+                map: map,
+            });
+        }
+    </script>
 </body>
 </html>
