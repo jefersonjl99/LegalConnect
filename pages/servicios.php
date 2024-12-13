@@ -1,4 +1,5 @@
-<?php 
+<?php
+session_start(); // Iniciar sesión para acceder a las variables de sesión
 ?>
 
 <!DOCTYPE html>
